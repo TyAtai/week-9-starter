@@ -23,7 +23,7 @@ Progress against the TODO list: [docs/STATUS.md](docs/STATUS.md).
 | --- | --- | --- |
 | Speech-to-text (default) | **Apple on-device speech** (`requiresOnDeviceRecognition: true`) | No download; Apple's servers are never used; stops if on-device isn't supported |
 | Speech-to-text (alt) | **Whisper base.en Q5_1** (60 MB) via whisper.rn | Clearly better than tiny on conversational speech, still faster than real time on A14. Options: tiny.en (32 MB, fastest), small.en (190 MB, most accurate) |
-| Sensitive-span detection | **Qwen2.5-1.5B-Instruct Q4_K_M** (1.1 GB) via llama.rn | Reliable JSON-schema output and good entity recall for its size; fits 4 GB RAM. Options: Qwen2.5-0.5B (490 MB) for old phones / long transcripts, Llama-3.2-1B (808 MB) for comparison |
+| Sensitive-span detection | **Qwen2.5-1.5B-Instruct Q4_K_M** (1.1 GB) via llama.rn (`0.13.0-rc.9`; 0.12.9 doesn't build on RN 0.88) | Reliable JSON-schema output and good entity recall for its size; fits 4 GB RAM. Options: Qwen2.5-0.5B (490 MB) for old phones / long transcripts, Llama-3.2-1B (808 MB) for comparison |
 | Cloud analysis (default) | **anthropic/claude-sonnet-5.5** on OpenRouter | Strong qualitative reasoning + strict structured outputs; ~a few cents per hour-long interview. Options: Claude Haiku 5.5 (cheapest), Claude Opus 5.5 (deepest), Gemini 3.5 Flash, or any custom id with `json_schema` support |
 
 All download URLs/sizes were verified against Hugging Face; prices come from OpenRouter's model list (Nov 2026).
@@ -55,7 +55,9 @@ npx expo run:ios --device   # physical iPhone recommended
 # or cloud: npx eas-cli@latest build --profile development --platform ios
 ```
 
-`ios/` and `android/` are generated (CNG); configure native settings in `app.json` only. After adding/updating native libraries, rebuild the dev client.
+`ios/` and `android/` are generated (CNG); configure native settings in `app.json` only. After adding/updating native libraries, rebuild the dev client (`rm -rf ios && npx expo run:ios`).
+
+The simulator dev build has been verified to compile and launch. On a physical phone over campus Wi-Fi, start Metro with `npx expo start --tunnel`: iOS blocks plain-HTTP loads from a public LAN IP.
 
 ### First-run setup
 

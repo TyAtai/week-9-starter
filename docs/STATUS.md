@@ -16,7 +16,9 @@ This file tracks progress against `UX_Research_App_TODO.md`. For setup, models, 
 | `npx expo-doctor` | ✅ 20/20 checks |
 | `npx expo export --platform ios` (Metro bundle) | ✅ builds |
 | Expo Go on iOS simulator (iPhone 17) | ✅ home, demo project, interview + bundled audio playback, privacy review (8 identifiers masked in Sample A) |
-| Development build on a physical iPhone | ⬜ not done |
+| Development build on iOS simulator (`npx expo run:ios`) | ✅ compiles (0 errors), installs, launches in full mode; Settings shows "Development build" |
+| Development build on a physical iPhone | ⬜ not done (needs an Apple signing team) |
+| Model download, on-device transcription, local LLM in dev build | ⬜ not exercised yet |
 | Real OpenRouter analysis request | ⬜ not sent (would incur charges) |
 
 ## TODO checklist
@@ -69,7 +71,7 @@ This file tracks progress against `UX_Research_App_TODO.md`. For setup, models, 
 
 ## Next steps
 
-1. Build the dev client (`npx expo run:ios --device`) on an iPhone 12-class device.
+1. Install the dev client on an iPhone 12-class device (`npx expo run:ios --device`, needs a signing team). On campus Wi-Fi use `npx expo start --tunnel`: iOS App Transport Security blocks loading JS from a public LAN IP.
 2. Download Whisper base.en and Qwen2.5-1.5B, then run the Settings benchmark and record results here.
 3. Record a short consented test interview; compare Apple vs Whisper transcription.
 4. Send one real analysis with a spending-limited OpenRouter key and confirm the structured response.
@@ -82,3 +84,4 @@ This file tracks progress against `UX_Research_App_TODO.md`. For setup, models, 
 - Apple file recognition timestamps across multiple final results use an offset heuristic; verify on long recordings.
 - Imported non-WAV files work only with Apple speech, not Whisper.
 - Android has not been built or tested; on-device transcription and masking are iOS-first.
+- **llama.rn is pinned to a pre-release, `0.13.0-rc.9`.** The last stable release (0.12.9) fails to compile on React Native 0.88 because it uses the removed `RCTCxxBridge`. Move to 0.13.0 stable when it ships.
