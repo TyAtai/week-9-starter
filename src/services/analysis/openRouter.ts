@@ -42,8 +42,16 @@ function headers(apiKey: string) {
 
 function mapHttpError(status: number, providerMessage: string, retryAfter: string | null): AnalysisError {
   const detail = safeErrorMessage(providerMessage, '');
-  if (status === 401 || status === 403) {
-    return new AnalysisError('auth', 'OpenRouter rejected the API key. Check it in Settings.');
+  if (status === 401) {
+    return new AnalysisError('auth', `OpenRouter rejected the API key. Check it in Settings. ${detail}`.trim());
+  }
+  if (status === 403) {
+    // 403 is not a bad key: OpenRouter uses it for key credit limits, guardrails that block a model or
+    // provider, and moderation. Show OpenRouter's reason so the researcher can act on it.
+    return new AnalysisError(
+      'provider',
+      `OpenRouter refused this request (403) although the key is valid. Check the key's credit limit and guardrails at openrouter.ai. ${detail || 'No reason given.'}`.trim(),
+    );
   }
   if (status === 402) {
     return new AnalysisError('credits', 'Your OpenRouter account has insufficient credits for this request.');
@@ -57,10 +65,18 @@ function mapHttpError(status: number, providerMessage: string, retryAfter: strin
       Number.isFinite(seconds) ? seconds : undefined,
     );
   }
-  if (status === 404 && /data policy|zdr|zero data|no endpoints/i.test(providerMessage)) {
+  if (status === 404 && /data policy|zdr|zero data|privacy/i.test(providerMessage)) {
     return new AnalysisError(
       'privacy-routing',
       'No provider for this model satisfies your privacy settings (no data collection / ZDR). Choose another model or relax the setting.',
+    );
+  }
+  // With require_parameters, OpenRouter returns 404 "No endpoints found that can handle the requested
+  // parameters" when the model lacks a feature we send (e.g. structured outputs). Not a privacy issue.
+  if (status === 404 && /no endpoints|requested parameters/i.test(providerMessage)) {
+    return new AnalysisError(
+      'provider',
+      `This model has no OpenRouter endpoint that supports the request (structured JSON output). Choose another model. ${detail}`.trim(),
     );
   }
   return new AnalysisError('provider', `The provider returned an error (${status}). ${detail}`.trim());

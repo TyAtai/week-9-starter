@@ -100,7 +100,6 @@ export interface AnalysisRequest {
     messages: { role: 'system' | 'user'; content: string }[];
     response_format: { type: 'json_schema'; json_schema: { name: string; strict: boolean; schema: typeof ANALYSIS_SCHEMA } };
     provider: { data_collection: 'allow' | 'deny'; zdr?: boolean; require_parameters: boolean };
-    temperature: number;
     max_tokens: number;
   };
   masked: MaskedSegment[];
@@ -165,7 +164,6 @@ export function buildAnalysisRequest(params: {
         ...(params.privacy.requireZdr ? { zdr: true } : {}),
         require_parameters: true,
       },
-      temperature: 0.2,
       max_tokens: 6000,
     },
     masked,

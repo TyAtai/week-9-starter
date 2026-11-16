@@ -98,10 +98,31 @@ describe('OpenRouter client error handling', () => {
     await expect(requestAnalysis({ apiKey: 'sk-or-test-123456', request })).rejects.toMatchObject({ kind });
   });
 
+  it('reports 403 as a refused request with the OpenRouter reason, not a bad key', async () => {
+    const request = buildAnalysisRequest({ project: makeProject(), session: await okSession, model: 'm/x', privacy });
+    mockFetch(403, { error: { message: 'Key limit exceeded' } });
+    await expect(requestAnalysis({ apiKey: 'sk-or-test-123456', request })).rejects.toMatchObject({
+      kind: 'provider',
+      message: expect.stringContaining('Key limit exceeded'),
+    });
+  });
+
   it('maps privacy-routing failures', async () => {
     const request = buildAnalysisRequest({ project: makeProject(), session: await okSession, model: 'm/x', privacy });
     mockFetch(404, { error: { message: 'No endpoints found matching your data policy' } });
     await expect(requestAnalysis({ apiKey: 'sk-or-test-123456', request })).rejects.toMatchObject({ kind: 'privacy-routing' });
+  });
+
+  it('does not report unsupported-parameter 404s as privacy failures', async () => {
+    const request = buildAnalysisRequest({ project: makeProject(), session: await okSession, model: 'm/x', privacy });
+    mockFetch(404, { error: { message: 'No endpoints found that can handle the requested parameters.' } });
+    await expect(requestAnalysis({ apiKey: 'sk-or-test-123456', request })).rejects.toMatchObject({ kind: 'provider' });
+  });
+
+  it('omits temperature, which Claude 5.5 endpoints reject under require_parameters', async () => {
+    const request = buildAnalysisRequest({ project: makeProject(), session: await okSession, model: 'm/x', privacy });
+    expect(request.body).not.toHaveProperty('temperature');
+    expect(request.body.provider.require_parameters).toBe(true);
   });
 
   it('requires an API key', async () => {
