@@ -1,6 +1,6 @@
 # Project status — Interview Lens
 
-_Last updated: 2026-11-09_
+_Last updated: 2026-11-15_
 
 This file tracks progress against `UX_Research_App_TODO.md`. For setup, models, and privacy design, see the root [README](../README.md).
 
@@ -17,9 +17,10 @@ This file tracks progress against `UX_Research_App_TODO.md`. For setup, models, 
 | `npx expo export --platform ios` (Metro bundle) | ✅ builds |
 | Expo Go on iOS simulator (iPhone 17) | ✅ home, demo project, interview + bundled audio playback, privacy review (8 identifiers masked in Sample A) |
 | Development build on iOS simulator (`npx expo run:ios`) | ✅ compiles (0 errors), installs, launches in full mode; Settings shows "Development build" |
-| Development build on a physical iPhone | ⬜ not done (needs an Apple signing team) |
-| Model download, on-device transcription, local LLM in dev build | ⬜ not exercised yet |
-| Real OpenRouter analysis request | ⬜ not sent (would incur charges) |
+| Development build on a physical iPhone | ✅ installed on iPhone 13 Pro (free Apple ID personal team, 2026-11-15); runs via `npx expo start --tunnel`. See [IPHONE_DEV_BUILD.md](IPHONE_DEV_BUILD.md) |
+| On-device transcription in dev build (physical iPhone) | ✅ audio → transcript runs on device (user-verified 2026-11-15) |
+| Local LLM masking (llama.rn) and Settings benchmark on device | ⬜ not exercised yet |
+| Real OpenRouter analysis request | ✅ succeeded from the physical iPhone (user-verified 2026-11-15), after removing `temperature` (unsupported by Claude 5.5 endpoints) |
 
 ## TODO checklist
 
@@ -37,7 +38,7 @@ This file tracks progress against `UX_Research_App_TODO.md`. For setup, models, 
 ### 3. Capture & transcribe
 - ✅ Audio import (expo-document-picker), playback with tap-to-seek, simulator testing with bundled WAVs
 - 🟡 Microphone recording (16 kHz mono WAV, background recording, pause/resume, discard guard)
-- 🟡 Apple on-device speech (`requiresOnDeviceRecognition: true`) and Whisper (base.en default) in the dev build
+- ✅ On-device transcription running in the dev build on a physical iPhone (Apple on-device speech / Whisper base.en); quality comparison still pending
 - 🟡 Availability checks for iOS version, on-device support, locale, model download, permissions, and WAV format; stops instead of uploading
 - ✅ Stable segment ids + timestamps, transcript corrections with original kept, manual speaker labels
 
@@ -55,7 +56,7 @@ This file tracks progress against `UX_Research_App_TODO.md`. For setup, models, 
 - ✅ Payload limited to masked text, segment ids, generic speaker roles, optional masked context; leak check blocks sending
 - ✅ Strict JSON schema, validated response, links to segment ids, non-verbatim quotes flagged
 - ✅ Cancel, timeout, auth, credits, rate-limit, offline, privacy-routing, and truncation handling; `data_collection: deny` and optional ZDR
-- ⬜ Live request against OpenRouter
+- ✅ Live request against OpenRouter (2026-11-15)
 
 ### 6. Research workflow
 - ✅ Project/session lists, transcript editing, coding view, theme grouping, researcher edits to AI suggestions
@@ -64,17 +65,17 @@ This file tracks progress against `UX_Research_App_TODO.md`. For setup, models, 
 
 ### 7. Validate & package
 - ✅ Unit tests: redaction, placeholder consistency, payload boundary, error mapping, validation, store invariants
-- 🟡 Expo Go demo checked in simulator; dev build not yet built
+- ✅ Expo Go demo checked in simulator and on phone; dev build built for simulator and installed on a physical iPhone
 - ⬜ Device measurements: transcription quality, missed identifiers on real speech, time, memory, battery
 - ⬜ Device edge cases: denied permissions, missing models, malformed files, offline, interruptions
 - ✅ Docs: install, model setup, demo limitations, pseudonymization vs anonymity (README)
 
 ## Next steps
 
-1. Install the dev client on an iPhone 12-class device (`npx expo run:ios --device`, needs a signing team). On campus Wi-Fi use `npx expo start --tunnel`: iOS App Transport Security blocks loading JS from a public LAN IP.
-2. Download Whisper base.en and Qwen2.5-1.5B, then run the Settings benchmark and record results here.
+1. ~~Install the dev client on a physical iPhone~~ ✅ done 2026-11-15. The free-team signature expires after 7 days; refresh with `npx expo run:ios --device`. In-class steps: [CLASS_QUICKSTART.md](CLASS_QUICKSTART.md).
+2. Download Qwen2.5-1.5B, then run the Settings benchmark and record results here.
 3. Record a short consented test interview; compare Apple vs Whisper transcription.
-4. Send one real analysis with a spending-limited OpenRouter key and confirm the structured response.
+4. ~~Send one real analysis~~ ✅ done 2026-11-15.
 5. Walk through the edge cases in §7 on device.
 
 ## Known limitations

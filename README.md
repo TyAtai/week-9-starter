@@ -4,7 +4,7 @@ Record or import interviews on an iPhone, transcribe them **on the device**, pse
 
 Built from `UX_Research_App_TODO.md`, following the patterns in the course demo [UMSI669/Voice-To-Text](https://github.com/UMSI669/Voice-To-Text) (Expo SDK 58, Expo Router, expo-audio, expo-file-system, Redux Toolkit, whisper.rn, expo-speech-recognition).
 
-Progress against the TODO list: [docs/STATUS.md](docs/STATUS.md).
+Progress against the TODO list: [docs/STATUS.md](docs/STATUS.md). Build timeline and AI prompting log: [docs/PROCESS.md](docs/PROCESS.md).
 
 ## MVP decisions (TODO §1)
 
@@ -57,7 +57,10 @@ npx expo run:ios --device   # physical iPhone recommended
 
 `ios/` and `android/` are generated (CNG); configure native settings in `app.json` only. After adding/updating native libraries, rebuild the dev client (`rm -rf ios && npx expo run:ios`).
 
-The simulator dev build has been verified to compile and launch. On a physical phone over campus Wi-Fi, start Metro with `npx expo start --tunnel`: iOS blocks plain-HTTP loads from a public LAN IP.
+The dev build runs on a physical iPhone with on-device transcription (verified 2026-11-15). On campus Wi-Fi, start Metro with `npx expo start --tunnel`: iOS blocks plain-HTTP loads from a public LAN IP. Then open the **Interview Lens** app, not Expo Go.
+
+- **Running it in class:** [docs/CLASS_QUICKSTART.md](docs/CLASS_QUICKSTART.md)
+- **First-time iPhone setup and troubleshooting** (signing team, Developer Mode, keychain prompts, `ApplicationVerificationFailed`, trusting the developer): [docs/IPHONE_DEV_BUILD.md](docs/IPHONE_DEV_BUILD.md)
 
 ### First-run setup
 
